@@ -182,14 +182,23 @@
      → 
    </div> 
   </div> 
+  <audio id="menuMusic" loop>
+    <source src="menu_music.mp3" type="audio/mpeg">
+  </audio>
   <audio id="bgMusic" loop> 
    <source src="music.mp3" type="audio/mpeg"> 
   </audio> 
-  <audio id="blackWorldMusic" loop>
+  <audio id="blackWorldMusic">
   <source src="black_world_music.mp3" type="audio/mpeg">
 </audio>
 <audio id="blackoutSound">
   <source src="blackout_sound.mp3" type="audio/mpeg">
+</audio>
+<audio id="meowSound">
+  <source src="meow.mp3" type="audio/mpeg">
+</audio>
+<audio id="hellMusic">
+  <source src="hell_music.mp3" type="audio/mpeg">
 </audio>
   
   <script>
@@ -198,6 +207,7 @@
   const gameTitle = document.getElementById('gameTitle');
   const startControls = document.getElementById('startControls');
   const gameStartButton = document.getElementById('gameStartButton');
+  const menuMusic = document.getElementById('menuMusic');
   const bgMusic = document.getElementById('bgMusic');
   const blackWorldMusic = document.getElementById('blackWorldMusic');
   const settingsButton = document.getElementById('settingsButton');
@@ -205,6 +215,10 @@
   const volumeSlider = document.getElementById('volumeSlider');
   const resumeButton = document.getElementById('resumeButton');
   const volumeLabel = document.getElementById('volumeLabel');
+
+  // Start playing menu music when page loads
+  menuMusic.volume = 0.5;
+  menuMusic.play();
 
   document.getElementById('languageRu').addEventListener('click', () => {
     language = 'ru';
@@ -230,7 +244,8 @@
     gameTitle.style.opacity = 0;
     gameTitle.style.transform = 'scale(0)';
     settingsButton.style.display = 'block';
-    bgMusic.play();
+    menuMusic.pause(); // Stop menu music
+    bgMusic.play(); // Start game music
     gameStarted = true;
     isPaused = false;
     gameLoop();
@@ -248,6 +263,7 @@
 
   volumeSlider.addEventListener('input', () => {
     bgMusic.volume = volumeSlider.value;
+    menuMusic.volume = volumeSlider.value;
   });
 
   const canvas = document.getElementById('gameCanvas');
@@ -330,51 +346,54 @@ if (rand < 0.01 && !inHell) { // белый появляется только в
 
   function updateRobuxes() {
     for (let i = robuxes.length - 1; i >= 0; i--) {
-      const r = robuxes[i];
-      r.y += r.speed;
-      if (r.type === 'whiteRainbow') {
-      r.x += 2 * r.direction;
-      if (r.x < r.radius || r.x > canvas.width - r.radius) {
-        r.direction *= -1;
-      }
-    }
+        const r = robuxes[i];
+        r.y += r.speed;
+        if (r.type === 'whiteRainbow') {
+            r.x += 2 * r.direction;
+            if (r.x < r.radius || r.x > canvas.width - r.radius) {
+                r.direction *= -1;
+            }
+        }
 
-      const dx = player.x - r.x;
-      const dy = player.y - r.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
+        const dx = player.x - r.x;
+        const dy = player.y - r.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance < player.radius + r.radius) {
-  robuxes.splice(i, 1);
-  if (r.type === 'gold') {
-    score += 5;
-  } else if (r.type === 'black') {
-    activateBlackRobuxEffect();
-  } else if (r.type === 'pink') {
-    activateFlamingoEffect();
-  } else if (r.type === 'whiteRainbow') {
-    enterHellWorld(); // <-- вот сюда перемести
-  } else {
-    lives--;
-    if (lives <= 0) {
-      endGame();
-      return;
+        if (distance < player.radius + r.radius) {
+            robuxes.splice(i, 1);
+            if (r.type === 'gold') {
+                score += 5;
+            } else if (r.type === 'black') {
+                activateBlackRobuxEffect();
+            } else if (r.type === 'pink') {
+                activateFlamingoEffect();
+            } else if (r.type === 'whiteRainbow') {
+                enterHellWorld();
+            } else if (r.type === 'grayFinal') {
+                showGrayRobuxEffect();
+            } else {
+                lives--;
+                if (lives <= 0) {
+                    endGame();
+                    return;
+                }
+            }
+        }
+
+        if (r && r.y > canvas.height) {
+            robuxes.splice(i, 1);
+            if (r.type === 'gold') {
+                shakeScreen();
+                if (score > 0) score--;
+            } else if (r.type === 'grayFinal') {
+                showGrayRobuxEffect();
+            } else {
+                score++;
+                if (score % 10 === 0) difficulty += 0.03;
+            }
+        }
     }
-  }
 }
-      
-
-      if (r && r.y > canvas.height) {
-  robuxes.splice(i, 1);
-  if (r.type === 'gold') {
-    shakeScreen();
-    if (score > 0) score--;
-  } else {
-    score++;
-    if (score % 10 === 0) difficulty += 0.03;
-  }
-}
-    }
-  }
   function drawPlayer() {
     ctx.fillStyle = player.color || 'yellow';
     ctx.beginPath();
@@ -570,6 +589,43 @@ if (robux.type === 'black') {
   };
   return;
 }
+if (robux.type === 'grayFinal') {
+  ctx.fillStyle = 'lightgray';
+  ctx.beginPath();
+  ctx.arc(robux.x, robux.y, robux.radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Ушки
+  const earSize = robux.radius * 0.4;
+  ctx.beginPath();
+  ctx.moveTo(robux.x - earSize, robux.y - robux.radius);
+  ctx.lineTo(robux.x - earSize / 2, robux.y - robux.radius - earSize);
+  ctx.lineTo(robux.x, robux.y - robux.radius);
+  ctx.fillStyle = 'black';
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(robux.x + earSize, robux.y - robux.radius);
+  ctx.lineTo(robux.x + earSize / 2, robux.y - robux.radius - earSize);
+  ctx.lineTo(robux.x, robux.y - robux.radius);
+  ctx.fill();
+
+  // Глазки
+  ctx.fillStyle = 'black';
+  ctx.beginPath();
+  ctx.arc(robux.x - 10, robux.y - 5, 4, 0, Math.PI * 2);
+  ctx.arc(robux.x + 10, robux.y - 5, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Улыбка
+  ctx.beginPath();
+  ctx.arc(robux.x, robux.y + 8, 10, 0.2 * Math.PI, 0.8 * Math.PI);
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  return;
+}
 }
   function drawUI() {
     ctx.fillStyle = 'white';
@@ -727,6 +783,10 @@ function activateFlamingoEffect() {
   gameStarted = false;
   bgMusic.pause();
   bgMusic.currentTime = 0;
+  
+  // Остановить адскую музыку
+  const hellMusic = document.getElementById('hellMusic');
+  hellMusic.pause();
 
   if (hellInterval) clearInterval(hellInterval);
   inHell = false;
@@ -760,6 +820,13 @@ function enterHellWorld() {
   const overlay = document.getElementById('hellOverlay');
   overlay.style.opacity = '1';
 
+  // Остановить обычную музыку и включить адскую
+  bgMusic.pause();
+  const hellMusic = document.getElementById('hellMusic');
+  hellMusic.currentTime = 0;
+  hellMusic.loop = true;
+  hellMusic.play();
+
   clearRobuxesNextFrame = true;
 
   hellInterval = setInterval(() => {
@@ -786,16 +853,25 @@ function exitHellWorld() {
   inHell = false;
   if (hellInterval) clearInterval(hellInterval);
 
+  // Остановить адскую музыку и вернуть обычную
+  const hellMusic = document.getElementById('hellMusic');
+  hellMusic.pause();
+  bgMusic.currentTime = 0;
+  bgMusic.play();
+
   const overlay = document.getElementById('hellOverlay');
   overlay.style.opacity = '0';
 }
 function enterBlackRobuxWorld() {
   const blackRobuxWorld = document.getElementById('blackRobuxWorld');
-  blackRobuxWorld.style.display = 'block'; // Показать фон нового мира
+  blackRobuxWorld.style.display = 'block';
 
-  bgMusic.pause(); // Остановить обычную музыку
-  blackWorldMusic.currentTime = 0;
-  blackWorldMusic.play(); // Включить музыку нового мира
+  bgMusic.pause();
+
+  if (blackWorldMusic.paused) {
+    blackWorldMusic.currentTime = 0;
+    blackWorldMusic.play();
+  }
 
   clearRobuxesNextFrame = true;
 
@@ -809,9 +885,68 @@ function enterBlackRobuxWorld() {
       type: 'dark'
     });
   }, 1000);
+
+  blackWorldMusic.onended = () => {
+    if (darkWorldInterval) {
+        clearInterval(darkWorldInterval);
+        darkWorldInterval = null;
+    }
+
+    // Задержка перед появлением серого робукса
+    setTimeout(() => {
+        const meow = document.getElementById('meowSound');
+        meow.currentTime = 0;
+        meow.play();
+
+        robuxes.push({
+            x: Math.random() * (canvas.width - 60),
+            y: 0,
+            radius: 30,
+            speed: 2,
+            color: 'gray',
+            type: 'grayFinal'
+        });
+    }, 5000); // 5 секунд
 }
-  bgMusic.volume = 0.5;
-  volumeSlider.value = 0.5;
+}
+
+function showGrayRobuxEffect() {
+    const effectElement = document.getElementById('grayRobuxEffect');
+    const sound = document.getElementById('grayRobuxSound');
+    
+    // Показываем эффект серого робукса
+    effectElement.style.display = 'flex';
+    sound.currentTime = 0;
+    sound.play();
+    
+    setTimeout(() => {
+        // Убираем эффект серого робукса
+        effectElement.style.display = 'none';
+        sound.pause();
+        
+        // Возвращаем в обычную игру:
+        const blackRobuxWorld = document.getElementById('blackRobuxWorld');
+        blackRobuxWorld.style.display = 'none'; // Убираем фон "чёрного мира"
+        
+        blackWorldMusic.pause(); // Выключаем музыку чёрного мира
+        blackWorldMusic.currentTime = 0;
+        
+        bgMusic.currentTime = 0; // Включаем обычную музыку
+        bgMusic.play();
+        
+        if (darkWorldInterval) { // Останавливаем спавн чёрных робуксов
+            clearInterval(darkWorldInterval);
+            darkWorldInterval = null;
+        }
+        
+        clearRobuxesNextFrame = true; // Очищаем все робуксы
+    }, 5000); // Через 5 секунд
+}
+
+// Эти строки уже были в коде:
+bgMusic.volume = 0.5;
+menuMusic.volume = 0.5;
+volumeSlider.value = 0.5;
 </script> 
   <div id="catchNotice" style="
   position: fixed;
@@ -933,5 +1068,25 @@ type: 'dark'
   display: none;
   z-index: 0; /* <= поставить самый маленький уровень */
 "></div>
+
+<!-- Эффект серого робукса -->
+<div id="grayRobuxEffect" style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  pointer-events: none;
+">
+  <img id="grayRobuxImage" src="gray_robux_image.png" style="max-width: 80%; max-height: 80%;">
+</div>
+
+<audio id="grayRobuxSound" src="gray_robux_sound.mp3"></audio>
+
  </body>
 </html>
