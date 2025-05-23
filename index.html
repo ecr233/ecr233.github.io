@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <script>
+  // Проверяем, это мобильное устройство или ПК
+  function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+
+  // Если это ПК — скрываем всё и показываем заглушку
+  if (!isMobile()) {
+    document.addEventListener('DOMContentLoaded', function() {
+      document.body.innerHTML = `
+        <div style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          background: #87CEEB;
+          font-family: Arial;
+          color: white;
+          text-align: center;
+          padding: 20px;
+        ">
+          <h1>Игра доступна только на мобильных устройствах 📱</h1>
+        </div>
+      `;
+    });
+  }
+</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <title>Зомби Аркада</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="languageSelection">
+    <div class="language-button" id="languageRu">Русский</div>
+    <div class="language-button" id="languageEn">English</div>
+  </div>
+  <div id="gameTitle">ЭВИЛ КЕШ РЕЙН</div>
+  <div id="startControls">
+    <div class="menu-button" id="gameStartButton"></div>
+  </div>
+  <div id="settingsButton">⚙</div>
+  <div id="pauseMenu">
+    <div id="volumeLabel">Громкость</div>
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.01">
+    <div class="menu-button" id="resumeButton">Продолжить</div>
+  </div>
+  <canvas id="gameCanvas"></canvas>
+  <div id="controls">
+    <div id="leftButton" class="touch-button">←</div>
+    <div id="rightButton" class="touch-button">→</div>
+  </div>
+
+  <!-- Audio elements -->
+  <audio id="menuMusic" loop preload="auto">
+    <source src="menu_music.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="bgMusic" loop preload="auto">
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="blackWorldMusic" preload="auto">
+    <source src="black_world_music.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="blackoutSound" preload="auto">
+    <source src="blackout_sound.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="meowSound" preload="auto">
+    <source src="meow.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="hellMusic" preload="auto">
+    <source src="hell_music.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="deathSound" preload="auto">
+    <source src="death_sound.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="grayRobuxSound" src="gray_robux_sound.mp3" preload="auto"></audio>
+  <audio id="yellowReverseMusic" preload="auto">
+    <source src="reversed_music.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="batHitSound" preload="auto">
+    <source src="bathit.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="flipSound" preload="auto">
+    <source src="flip_sound.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Effects -->
+  <div id="catchNotice"></div>
+  <div id="blackout"></div>
+  <div id="horrorElements">
+    <img id="leftHand" src="left_hand.png">
+    <img id="rightHand" src="right_hand.png">
+    <img id="eye" src="eye.png">
+  </div>
+  <div id="hellOverlay"></div>
+  <div id="blackRobuxWorld"></div>
+  <div id="grayRobuxEffect">
+    <img id="grayRobuxImage" src="gray_robux_image.png">
+  </div>
+  <div id="yellowReverseWorld"></div>
+  <div id="batHitEffect">
+    <img src="bat_hit.gif">
+  </div>
+  <div id="flipEffect">
+    <img src="yellowguy.gif">
+  </div>
+  <div id="yellowReverseTransition"></div>
+  <div id="gameOverScreen">
+    <div>
+      <div id="gameOverText"></div>
+      <div id="totalScoreText"></div>
+      <div>
+        <div id="restartButton" class="menu-button"></div>
+        <div id="menuButton" class="menu-button">Меню</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
