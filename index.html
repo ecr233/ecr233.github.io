@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ru"> 
+<head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0"> 
+  <title>Evil Cash Rain</title> 
+  <link rel="stylesheet" href="styles.css">
+</head> 
+<body> 
+  <div id="languageSelection"> 
+   <div class="language-button" id="languageRu">
+     Русский 
+   </div> 
+   <div class="language-button" id="languageEn">
+     English 
+   </div> 
+  </div> 
+  <div id="gameTitle">
+    ЭВИЛ КЕШ РЕЙН 
+  </div> 
+  <div id="startControls"> 
+   <div class="menu-button" id="gameStartButton"></div> 
+   <div class="menu-button" id="shopButton"></div>
+   <div class="menu-button" id="questsButton"></div>
+  </div> 
+  <div id="settingsButton">
+    ⚙ 
+  </div> 
+  <div id="accountMenu">
+    <div class="account-button" id="account1">1</div>
+    <div class="account-button" id="account2">2</div>
+    <div class="account-button" id="account3">3</div>
+  </div>
+  <div id="pauseMenu"> 
+   <div id="volumeLabel">
+     Громкость 
+   </div> 
+   <input type="range" id="volumeSlider" min="0" max="1" step="0.01"> 
+   <div class="menu-button" id="resumeButton">
+     Продолжить 
+   </div> 
+  </div> 
+  <canvas id="gameCanvas" style="position: relative; z-index: 2;"></canvas> 
+  <div id="controls"> 
+   <div id="leftButton" class="touch-button">
+     ← 
+   </div> 
+   <div id="rightButton" class="touch-button">
+     → 
+   </div> 
+  </div> 
+  
+  <!-- Меню выбора пути -->
+  <div id="pathSelectionMenu">
+    <h2 id="pathTitle"></h2>
+    <div class="path-button" id="path1Button"></div>
+    <div class="path-button" id="path2Button"></div>
+    <div class="path-button" id="path3Button"></div>
+  </div>
+  
+  <!-- Аудио элементы -->
+  <audio id="menuMusic" loop>
+    <source src="menu_music.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="bgMusic" loop> 
+   <source src="music.mp3" type="audio/mpeg"> 
+  </audio> 
+  <audio id="blackWorldMusic">
+    <source src="black_world_music.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="blackoutSound">
+    <source src="blackout_sound.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="meowSound">
+    <source src="meow.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="hellMusic">
+    <source src="hell_music.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="deathSound">
+    <source src="death_sound.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="grayRobuxSound" src="gray_robux_sound.mp3"></audio>
+  <audio id="yellowReverseMusic">
+    <source src="reversed_music.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="batHitSound">
+    <source src="bathit.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="questCompleteSound" src="quest_complete.mp3"></audio>
+  
+  <!-- Эффекты -->
+  <div id="catchNotice"></div> 
+  <div id="blackout"></div> 
+  <div id="horrorElements"> 
+   <img id="leftHand" src="left_hand.png"> 
+   <img id="rightHand" src="right_hand.png"> 
+   <img id="eye" src="eye.png"> 
+  </div> 
+  <div id="hellOverlay"></div> 
+  <div id="blackRobuxWorld"></div>
+  <div id="grayRobuxEffect">
+    <img id="grayRobuxImage" src="gray_robux_image.png">
+  </div>
+  <div id="yellowReverseWorld"></div>
+  <div id="batHitEffect">
+    <img src="bat_hit.gif">
+  </div>
+  <div id="questCompleted"></div>
+  <div id="timeRewindEffect">
+    <div id="timeRewindText">-5 SECONDS</div>
+  </div>
+
+  <div id="gameOverScreen">
+    <div>
+      <div id="gameOverText"></div>
+      <div id="totalScoreText"></div>
+      <div id="gameOverButtons">
+        <div id="restartButton" class="menu-button"></div>
+        <div id="menuButton" class="menu-button">Меню</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="questsMenu">
+    <h2 id="questsTitle"></h2>
+    <div id="questsList"></div>
+    <div id="questsButtons">
+      <div class="menu-button" id="closeQuestsButton"></div>
+      <div class="menu-button" id="exclusiveQuestsButton"></div>
+    </div>
+  </div>
+  
+  <div id="exclusiveQuestsMenu">
+    <h2 id="exclusiveQuestsTitle"></h2>
+    <div id="exclusiveQuestsList"></div>
+    <div class="menu-button" id="closeExclusiveQuestsButton"></div>
+  </div>
+  
+  <!-- Панель магазина -->
+  <div id="shopMenu">
+    <h2 id="shopTitle"></h2>
+    <div id="shopContent"></div>
+    <div id="totalScoreDisplay"></div>
+    <div class="menu-button" id="closeShopButton"></div>
+  </div>
+  
+  <script src="script.js"></script>
+</body>
+</html>
